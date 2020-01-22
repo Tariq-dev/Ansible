@@ -1,0 +1,55 @@
+- hosts: servers
+#  sudo_user: root
+  become: yes
+  tasks:
+
+
+
+         
+    - name: constellix-dns*.war on root (BY jenkins) (Done by git module)
+      git: repo=https://name:password@git.tiggee.net/scm/cnsdns/constellix-dns.git dest=/root/constellix-dns
+
+    - name: Set path to Environment variable as below in .bashrc file 
+      blockinfile:
+        path: ~/.bashrc
+        block: |
+           export GRAILS_OPTS="$GRAILS_OPTS -XX:MaxPermSize=768m -XX:PermSize=512m"
+           export CDN_CONFIG_LOCATION=/root/cdn/CDNExternalConfig.groovy
+           export CONSTELLIX_CONFIG_LOCATION=/opt/ExternalConfig.groovy
+
+    - name: add deploy_build.sh to root folder.
+      copy:
+        dest: "/root/deploy_build.sh"
+        content: |
+          #!/bin/sh
+          #This is a critical script to deploy the new constellix war
+          cd /usr/local/apache-tomcat-8.0.36/
+          sh bin/shutdown.sh
+          sleep 5
+          kill -9 `ps -ef | grep tomcat | awk '{ print $2 }'`
+          rm work/* webapps/ROOT -R
+          sleep 5
+          mv /root/constellix*.war /opt/constellix/dns/webapps/constellix-dns.war
+          sleep 5
+          sh bin/startup.sh
+        mode: 0755
+
+    - name: git clone constellix-cdn-integration at root folder.
+      git: repo=https://name:password@git.tiggee.net/scm/cnsdns/constellix-cdn-integration.git dest=/root/constellix-cdn-integration
+
+
+
+#    - name: Run deploy_build.sh script to check is it working fine.
+#      command: sh /root/deploy_build.sh 
+
+    
+
+  roles:
+#    - ansible-role-java
+#    - ansible-role-tomcat8
+#    - ansible-role-git
+#    - ansible-role-rabbitmq 
+    - nginx
+   
+
+
