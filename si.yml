@@ -7,7 +7,7 @@
 
          
     - name: constellix-dns*.war on root (BY jenkins) (Done by git module)
-      git: repo=https://name:password@git.tiggee.net/scm/cnsdns/constellix-dns.git dest=/root/constellix-dns
+      git: repo=https://name:password@git.test/constellix-dns.git dest=/root/constellix-dns
 
     - name: Set path to Environment variable as below in .bashrc file 
       blockinfile:
@@ -35,7 +35,7 @@
         mode: 0755
 
     - name: git clone constellix-cdn-integration at root folder.
-      git: repo=https://name:password@git.tiggee.net/scm/cnsdns/constellix-cdn-integration.git dest=/root/constellix-cdn-integration
+      git: repo=https://name:password@git.test/cnsdns/constellix-cdn-integration.git dest=/root/constellix-cdn-integration
 
 
 
